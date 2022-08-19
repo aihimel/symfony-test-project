@@ -16,14 +16,17 @@ class Server
     #[ORM\Column]
     private ?int $asset_id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $brand = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $brand_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\Column]
     private ?float $price = null;
+
+    #[ORM\Column]
+    private ?int $total_ram = null;
 
     public function getId(): ?int
     {
@@ -42,14 +45,14 @@ class Server
         return $this;
     }
 
-    public function getBrand(): ?string
+    public function getBrandId(): ?int
     {
-        return $this->brand;
+        return $this->brand_id;
     }
 
-    public function setBrand(string $brand): self
+    public function setBrandId(?int $brand_id): self
     {
-        $this->brand = $brand;
+        $this->brand_id = $brand_id;
 
         return $this;
     }
@@ -74,6 +77,18 @@ class Server
     public function setPrice(float $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getTotalRam(): ?int
+    {
+        return $this->total_ram;
+    }
+
+    public function setTotalRam(int $total_ram): self
+    {
+        $this->total_ram = $total_ram;
 
         return $this;
     }

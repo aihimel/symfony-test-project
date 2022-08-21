@@ -13,14 +13,15 @@ class Ram
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $server_id = null;
+    #[ORM\ManyToOne(inversedBy: 'rams')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Server $server_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
     #[ORM\Column]
-    private ?int $sticks = null;
+    private ?int $number_of_sticks = null;
 
     #[ORM\Column]
     private ?int $size = null;
@@ -30,12 +31,12 @@ class Ram
         return $this->id;
     }
 
-    public function getServerId(): ?int
+    public function getServerId(): ?Server
     {
         return $this->server_id;
     }
 
-    public function setServerId(int $server_id): self
+    public function setServerId(?Server $server_id): self
     {
         $this->server_id = $server_id;
 
@@ -54,14 +55,14 @@ class Ram
         return $this;
     }
 
-    public function getSticks(): ?int
+    public function getNumberOfSticks(): ?int
     {
-        return $this->sticks;
+        return $this->number_of_sticks;
     }
 
-    public function setSticks(int $sticks): self
+    public function setNumberOfSticks(int $number_of_sticks): self
     {
-        $this->sticks = $sticks;
+        $this->number_of_sticks = $number_of_sticks;
 
         return $this;
     }

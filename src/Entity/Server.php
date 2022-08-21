@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ServerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ServerRepository::class)]
@@ -14,10 +16,11 @@ class Server
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $asset_id = null;
+    private ?int $assetid = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $brand_id = null;
+    #[ORM\ManyToOne(inversedBy: 'servers')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Brand $brand_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -25,32 +28,37 @@ class Server
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column]
-    private ?int $total_ram = null;
+    #[ORM\OneToMany(mappedBy: 'server_id', targetEntity: Ram::class, orphanRemoval: true)]
+    private Collection $rams;
+
+    public function __construct()
+    {
+        $this->rams = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAssetId(): ?int
+    public function getAssetid(): ?int
     {
-        return $this->asset_id;
+        return $this->assetid;
     }
 
-    public function setAssetId(int $asset_id): self
+    public function setAssetid(int $assetid): self
     {
-        $this->asset_id = $asset_id;
+        $this->assetid = $assetid;
 
         return $this;
     }
 
-    public function getBrandId(): ?int
+    public function getBrandId(): ?Brand
     {
         return $this->brand_id;
     }
 
-    public function setBrandId(?int $brand_id): self
+    public function setBrandId(?Brand $brand_id): self
     {
         $this->brand_id = $brand_id;
 
@@ -81,14 +89,32 @@ class Server
         return $this;
     }
 
-    public function getTotalRam(): ?int
+    /**
+     * @return Collection<int, Ram>
+     */
+    public function getRams(): Collection
     {
-        return $this->total_ram;
+        return $this->rams;
     }
 
-    public function setTotalRam(int $total_ram): self
+    public function addRam(Ram $ram): self
     {
-        $this->total_ram = $total_ram;
+        if (!$this->rams->contains($ram)) {
+            $this->rams->add($ram);
+            $ram->setServerId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRam(Ram $ram): self
+    {
+        if ($this->rams->removeElement($ram)) {
+            // set the owning side to null (unless already changed)
+            if ($ram->getServerId() === $this) {
+                $ram->setServerId(null);
+            }
+        }
 
         return $this;
     }
